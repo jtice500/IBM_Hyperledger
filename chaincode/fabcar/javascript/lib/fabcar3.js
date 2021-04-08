@@ -4,49 +4,42 @@ const { Contract } = require('fabric-contract-api');
 
 class fabcar extends Contract {
 
-  //var current = new Date().toLocaleString;
-
     async initLedger(ctx) {
         const assets = [
             {
-               ID: 'asset1' ,
-               Source: 'EV Station',
-               Destination: 'Tom Cruise',
-               Energy: 76,
-               Price: 11.67,
-               //Time: current ,
+                ID: 'asset1',
+                Color: 'blue',
+                Energy: 10,
+                Model: 'Tesla X',
+                Rate: 300,
             },
             {
-               ID: 'asset2' ,
-               Source: 'EV Station',
-               Destination: 'George Strait',
-               Energy: 82,
-               Price: 12.48,
-               //Time: current ,
+                ID: 'asset2',
+                Color: 'blue',
+                Energy: 10,
+                Model: 'Tesla X',
+                Rate: 300,
             },
             {
-               ID: 'asset3' ,
-               Source: 'EV Station',
-               Destination: 'Elon Musk',
-               Energy: 250,
-               Price: 24.50,
-               //Time: current ,
+                ID: 'asset3',
+                Color: 'blue',
+                Energy: 10,
+                Model: 'Tesla X',
+                Rate: 300,
             },
             {
-               ID: 'asset4' ,
-               Source: 'EV Station',
-               Destination: 'Joe Rogan',
-               Energy: 42,
-               Price: 5.25,
-               //Time: current ,
+                ID: 'asset4',
+                Color: 'blue',
+                Energy: 10,
+                Model: 'Tesla X',
+                Rate: 300,
             },
             {
-               ID: 'asset5' ,
-               Source: 'EV Station',
-               Destination: 'Scarlet Johasson',
-               Energy: 63,
-               Price: 7.52,
-               //Time: current ,
+                ID: 'asset5',
+                Color: 'blue',
+                Energy: 10,
+                Model: 'Tesla X',
+                Rate: 300,
             },
         ];
 
@@ -58,17 +51,16 @@ class fabcar extends Contract {
     }
 
     // CreateAsset issues a new asset to the world state with given details.
-    async createCar(ctx, id, source, destination, energy, price) {
+    async createCar(ctx, id, color, energy, model, rate) {
         const asset = {
             ID: id,
-            Source: source,
-            Destination: destination,
+            Color: color,
             Energy: energy,
-            Price: price,
-            //Time: current ,
+            Model: model,
+            Rate: rate,
         };
 
-        if (parseInt(energy) < 10) {
+        if (asset.Energy < 10) {
           throw new Error('Must buy at least 10 energy');
         } else {
           ctx.stub.putState(id, Buffer.from(JSON.stringify(asset)));
@@ -121,8 +113,7 @@ class fabcar extends Contract {
     async TransferAsset(ctx, id, newOwner) {
         const assetString = await this.ReadAsset(ctx, id);
         const asset = JSON.parse(assetString);
-        asset.Source = asset.Destination;
-        asset.Destination = newOwner;
+        asset.Owner = newOwner;
         return ctx.stub.putState(id, Buffer.from(JSON.stringify(asset)));
     }
 
@@ -144,13 +135,7 @@ class fabcar extends Contract {
             allResults.push({ Key: result.value.key, Record: record });
             result = await iterator.next();
         }
-        let string = JSON.stringify(allResults);
-        let array = string.split("}},")
-        string = "";
-        for (let i = 0; i < array.length; i++) {
-            string = string + array[i] + "\n";
-        }
-        return string;
+        return JSON.stringify(allResults);
     }
 
 

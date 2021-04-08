@@ -2,7 +2,7 @@
 
 const { Contract } = require('fabric-contract-api');
 
-class fabcar extends Contract {
+class evtrans extends Contract {
 
   //var current = new Date().toLocaleString;
 
@@ -62,13 +62,13 @@ class fabcar extends Contract {
         const asset = {
             ID: id,
             Source: source,
-            Destination: destination,
+            Destination: dstination,
             Energy: energy,
             Price: price,
             //Time: current ,
         };
 
-        if (parseInt(energy) < 10) {
+        if (asset.Energy < 10) {
           throw new Error('Must buy at least 10 energy');
         } else {
           ctx.stub.putState(id, Buffer.from(JSON.stringify(asset)));
@@ -121,8 +121,7 @@ class fabcar extends Contract {
     async TransferAsset(ctx, id, newOwner) {
         const assetString = await this.ReadAsset(ctx, id);
         const asset = JSON.parse(assetString);
-        asset.Source = asset.Destination;
-        asset.Destination = newOwner;
+        asset.Owner = newOwner;
         return ctx.stub.putState(id, Buffer.from(JSON.stringify(asset)));
     }
 
@@ -156,4 +155,4 @@ class fabcar extends Contract {
 
 }
 
-module.exports = fabcar;
+module.exports = evtrans;
